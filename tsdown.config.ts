@@ -5,6 +5,7 @@ export default defineConfig(
   {
     tsconfig: './tsconfig.build.json',
     format: 'cjs',
+    target: 'node24',
     fixedExtension: false,
     sourcemap: false,
     dts: false,
