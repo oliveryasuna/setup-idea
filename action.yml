@@ -1,0 +1,54 @@
+name: 'Setup IntelliJ IDEA'
+description: 'Install and cache a JetBrains IntelliJ IDEA build on the runner.'
+author: 'Oliver Yasuna'
+
+branding:
+  icon: 'download'
+  color: 'blue'
+
+inputs:
+  version:
+    description: 'IntelliJ IDEA version to install (e.g. "2024.3.1"), or "latest".'
+    required: false
+    default: 'latest'
+  edition:
+    description: 'IDEA edition: "community" or "ultimate".'
+    required: false
+    default: 'community'
+  cache:
+    description: 'Cache the installation between runs, keyed to the resolved archive.'
+    required: false
+    default: 'true'
+  cache-key-prefix:
+    description: 'Prefix for the cache key. Change it to namespace or bust the cache.'
+    required: false
+    default: 'idea'
+  add-to-path:
+    description: 'Prepend the IDEA "bin" directory to PATH.'
+    required: false
+    default: 'true'
+  verify-checksum:
+    description: "Verify the download against JetBrains' published SHA-256 before extracting."
+    required: false
+    default: 'true'
+  install-dir:
+    description: 'Directory to install into. Defaults to "${RUNNER_TEMP}/idea".'
+    required: false
+
+outputs:
+  binary:
+    description: 'Absolute path to the resolved IDEA launcher.'
+  install-dir:
+    description: 'Absolute path to the installation root.'
+  version:
+    description: 'Resolved IDEA version (exact, even when "latest" was requested).'
+  build:
+    description: 'Resolved IDEA build number.'
+  archive:
+    description: 'Downloaded archive file name (the cache-key material).'
+  cache-hit:
+    description: 'Whether the installation was restored from cache ("true"/"false").'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

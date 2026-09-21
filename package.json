@@ -1,0 +1,43 @@
+{
+  "name": "setup-idea",
+  "private": true,
+  "engines": {
+    "bun": ">=1.3.0",
+    "node": ">=22.18.0"
+  },
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsdown",
+    "check": "bun check-bun-version.ts && bun typecheck && bun lint && bun format-pkg:check",
+    "format-pkg": "syncpack format",
+    "format-pkg:check": "syncpack format --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepack": "bun check",
+    "prepare": "husky",
+    "typecheck": "tsc --noEmit -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "@actions/cache": "6.2.0",
+    "@actions/core": "3.0.1",
+    "@actions/tool-cache": "4.0.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@oliveryasuna/eslint-config": "2.2.2",
+    "@oliveryasuna/tsdown-config": "1.0.1",
+    "@secretlint/secretlint-rule-preset-recommend": "13.0.2",
+    "@total-typescript/ts-reset": "0.6.1",
+    "@types/bun": "1.3.14",
+    "eslint": "9.39.2",
+    "husky": "9.1.7",
+    "jiti": "2.7.0",
+    "secretlint": "13.0.2",
+    "syncpack": "15.3.2",
+    "tsdown": "0.23.0",
+    "typescript": "5.9.3"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

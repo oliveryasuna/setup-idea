@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+
+      - run: bun install --frozen-lockfile
+
+      - name: Check (bun version, typecheck, lint, package format)
+        run: bun run check
+
+      - name: Build
+        run: bun run build
+
+      - name: Verify committed dist is up to date
+        run: |
+          if ! git diff --quiet -- dist; then
+            echo "dist/ is out of date. Run 'bun run build' and commit the result." >&2
+            git diff -- dist >&2
+            exit 1
+          fi
+
+  test:
+    name: Self-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: install
+        uses: ./
+        with:
+          edition: community
+
+      - name: Check outputs
+        run: |
+          echo "version:    ${{ steps.install.outputs.version }}"
+          echo "build:      ${{ steps.install.outputs.build }}"
+          echo "binary:     ${{ steps.install.outputs.binary }}"
+          echo "install:    ${{ steps.install.outputs.install-dir }}"
+          echo "archive:    ${{ steps.install.outputs.archive }}"
+          echo "cache-hit:  ${{ steps.install.outputs.cache-hit }}"
+          test -n "${{ steps.install.outputs.version }}"
+          test -x "${{ steps.install.outputs.binary }}"
+
+      - name: idea is on PATH
+        run: command -v idea
+
+      - id: reinstall
+        uses: ./
+        with:
+          edition: community
+
+      - name: Second install should hit the cache
+        run: test "${{ steps.reinstall.outputs.cache-hit }}" = "true"
